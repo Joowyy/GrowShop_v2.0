@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import ClientesProductos.Cliente;
 import ClientesProductos.Producto;
 
 public class Main {
@@ -19,7 +20,9 @@ public class Main {
 		Statement s = conexionBDD();
 		
 		ArrayList<Producto> C_productos = Producto.cargarProductos(s);
+		ArrayList<Cliente> C_clientes = Cliente.cargarClientes(s);
 		Producto pAux = new Producto();
+		Cliente cAux = new Cliente();
 		
 		char opc;
 		
@@ -32,7 +35,7 @@ public class Main {
                 break;
             
             case '2':
-                menuClientes();
+                menuClientes(C_clientes, cAux, s);
                 break;
             
             case '3':
@@ -192,7 +195,7 @@ public class Main {
                     break;
                     
                 case '4':
-                    //eliminarProducto();
+                    eliminarProducto(C_productos, pAux, s);
                     break;
                     
                 case '0':
@@ -208,7 +211,7 @@ public class Main {
     }
     
  // --- SUBMENU CLIENTES ---
-    private static void menuClientes() {
+    private static void menuClientes(ArrayList<Cliente> C_clientes, Cliente cAux, Statement s) {
     	Scanner sc = new Scanner(System.in);
         char opc;
     	
@@ -216,7 +219,7 @@ public class Main {
             System.out.println("\n👥 GESTIÓN DE CLIENTES");
             System.out.println("1. Listar clientes");
             System.out.println("2. Registrar cliente");
-            System.out.println("3. Buscar cliente por ID");
+            System.out.println("3. Eliminar cliente");
             System.out.println("0. Volver");
             System.out.print("Seleccione: ");
 
@@ -224,15 +227,15 @@ public class Main {
 
             switch (opc) {
                 case '1':
-                    //listarClientes();
+                    listarClientes(C_clientes);
                     break;
                     
                 case '2':
-                    //registrarCliente();
+                    registrarCliente(C_clientes, cAux, s);
                     break;
                     
                 case '3':
-                    //buscarCliente();
+                    eliminarCliente(C_clientes, cAux, s);
                     break;
                     
                 case '0':
@@ -246,7 +249,7 @@ public class Main {
     	
     }
     
- // --- FUNCIONES CLIENTES ---
+ // --- FUNCIONES PRODUCTOS ---
     public static void listarProductos (ArrayList<Producto> C_productos) {
     	
     	for (Producto p1 : C_productos) {
@@ -266,6 +269,35 @@ public class Main {
     public static void modificarProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
     	
     	pAux.modificarProducto(C_productos, s);
+    	
+    }
+    
+    public static void eliminarProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
+    	
+    	pAux.eliminarProducto(C_productos, s);
+    	
+    }
+    
+ // --- FUNCIONES CLIENTES ---
+    public static void listarClientes (ArrayList<Cliente> C_clientes) {
+    	
+    	for (Cliente c1 : C_clientes) {
+    		
+    		c1.mostrarProducto();
+    		
+    	}
+    	
+    }
+    
+    public static void registrarCliente (ArrayList<Cliente> C_clientes, Cliente cAux, Statement s) {
+    	
+    	cAux.registrarCliente(C_clientes, s);
+    	
+    }
+    
+    public static void eliminarCliente (ArrayList<Cliente> C_clientes, Cliente cAux, Statement s) {
+    	
+    	cAux.eliminarCliente(C_clientes, s);
     	
     }
 	

@@ -59,7 +59,7 @@ public class Producto {
 //	METODOS
 //	Actualiza la BDD en el ArrayList<Producto>
 	public static ArrayList<Producto> cargarProductos(Statement s) {
-	    ArrayList<Producto> productos = new ArrayList<>();
+	    ArrayList<Producto> C_productos = new ArrayList<>();
 	    
 	    try {
 	    	
@@ -71,7 +71,7 @@ public class Producto {
 	            double precio = rs.getDouble("precio");
 	            int stock = rs.getInt("stock");
 
-	            productos.add(new Producto(id_producto, nombre, precio, stock));
+	            C_productos.add(new Producto(id_producto, nombre, precio, stock));
 	            
 	        }
 	        
@@ -81,7 +81,7 @@ public class Producto {
 	        
 	    }
 
-	    return productos;
+	    return C_productos;
 	}
 
 	public void mostrarProducto() {
@@ -141,8 +141,10 @@ public class Producto {
 	        }
 
 		} catch (SQLException e) {
+			
 		    System.out.println("❌ Error al crear el producto.");
 		    e.printStackTrace();
+		    
 		}
 
 	}
@@ -235,8 +237,72 @@ public class Producto {
 		}
 		
 		if(!encontrado) {
+			
 	        System.out.println("❌ No existe producto con ID: " + idUsuario);
+	        
 	    }
+		
+	}
+	
+	public void eliminarProducto (ArrayList<Producto> C_productos, Statement s) {
+		Scanner sc = new Scanner (System.in);
+		boolean eliminado = false;
+		
+		for (Producto p1 : C_productos) {
+			
+			p1.mostrarProducto();
+			
+		}
+		
+		System.out.println("Estos son los productos actuales\nDime el ID del producto:");
+		int idEliminar = sc.nextInt();
+		
+		for (Producto p2 : C_productos) {
+			
+			if (p2.getId_producto() == idEliminar) {
+				
+				try {
+				
+					C_productos.remove(p2);
+					eliminado = true;
+				
+					String comandoSQL = String.format("DELETE FROM productos WHERE id_producto = '%s'", idEliminar);
+				
+					s.execute(comandoSQL);
+					System.out.println("✅ Producto eliminado correctamente");
+					break;
+					
+				} catch (SQLException e) {
+
+					System.out.println("❌ Error al actualizar en la base de datos");
+					e.printStackTrace();
+					
+				}
+				
+			}
+			
+		}
+		
+		if (!eliminado) {
+			
+			System.out.println("❌ No existe producto con ID: " + idEliminar);
+			
+		}
+		
+//		if (eliminado) {
+//			
+//	        try {
+//	        	
+//	            // Resetear AUTO_INCREMENT al máximo ID + 1
+//	            s.execute("SET @new_auto_inc = (SELECT MAX(id_producto) + 1 FROM productos)");
+//	            s.execute("ALTER TABLE productos AUTO_INCREMENT = @new_auto_inc");
+//	            
+//	        } catch (SQLException e) {
+//	        	
+//	            System.out.println("⚠️ No se pudo reajustar el AUTO_INCREMENT, pero el producto se eliminó.");
+//	            
+//	        }
+//	    }
 		
 	}
 	
