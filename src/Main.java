@@ -19,6 +19,7 @@ public class Main {
 		Statement s = conexionBDD();
 		
 		ArrayList<Producto> C_productos = Producto.cargarProductos(s);
+		Producto pAux = new Producto();
 		
 		char opc;
 		
@@ -27,7 +28,7 @@ public class Main {
 			opc = menu();
 			switch (opc) {
             case '1':
-                menuProductos(C_productos);
+                menuProductos(C_productos, pAux, s);
                 break;
             
             case '2':
@@ -162,7 +163,7 @@ public class Main {
 	}
 	
 // 	--- SUBMENU PRODUCTOS ---
-    public static void menuProductos(ArrayList<Producto> C_productos) {
+    public static void menuProductos(ArrayList<Producto> C_productos, Producto pAux, Statement s) {
         Scanner sc = new Scanner(System.in);
         char opc;
         
@@ -183,7 +184,7 @@ public class Main {
                     break;
                     
                 case '2':
-                    //añadirProducto();
+                    añadirProducto(C_productos, pAux, s);
                     break;
                     
                 case '3':
@@ -253,6 +254,20 @@ public class Main {
     		p1.mostrarProducto();
     		
     	}
+    	
+    }
+    
+    public static void añadirProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
+    	
+    	try {
+    		
+			pAux.añadirProducto(C_productos, s);
+			
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+			
+		}
     	
     }
 	
