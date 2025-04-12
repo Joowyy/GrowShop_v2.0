@@ -188,7 +188,7 @@ public class Main {
                     break;
                     
                 case '3':
-                    //modificarProducto();
+                    modificarProducto(C_productos, pAux, s);
                     break;
                     
                 case '4':
@@ -260,6 +260,12 @@ public class Main {
     public static void añadirProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
     	
     	pAux.añadirProducto(C_productos, s);
+    	
+    }
+    
+    public static void modificarProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
+    	
+    	pAux.modificarProducto(C_productos, s);
     	
     }
 	

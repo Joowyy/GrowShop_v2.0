@@ -104,17 +104,24 @@ public class Producto {
 		System.out.println("Precio del producto: ");
 		double precioP = sc.nextDouble();
 		int stockP;
-        do {
+        
+		do {
+        	
             System.out.println("¿Habrá stock en 2d max.? 1-si / 0-no");
             stockP = sc.nextInt();
+            
             if (stockP != 0 && stockP != 1) {
+            	
                 System.out.println("❌ Error: Solo se permite 0 (no) o 1 (sí).");
+                
             }
+            
         } while (stockP != 0 && stockP != 1);
 		
 		String comandoSQL = String.format("INSERT INTO productos (nombre, precio, stock) VALUES ('%s', '%s', '%s')", nombreP, precioP, stockP);
 
-		System.out.println("DEBUG: " + comandoSQL); // Verificar consulta
+// 		Verificar consulta
+		System.out.println("DEBUG: " + comandoSQL);
 		
 		try {
 
@@ -125,9 +132,12 @@ public class Producto {
 	        // Obtener ID generado
 	        ResultSet generatedKeys = s.getGeneratedKeys();
 	        if (generatedKeys.next()) {
+	        	
 	            int idGenerado = generatedKeys.getInt(1);
 	            C_productos.add(new Producto(idGenerado, nombreP, precioP, stockP));
+	            
 	            System.out.println("✅ Producto añadido con éxito. ID: " + idGenerado);
+	            
 	        }
 
 		} catch (SQLException e) {
@@ -135,6 +145,99 @@ public class Producto {
 		    e.printStackTrace();
 		}
 
+	}
+	
+	public void modificarProducto (ArrayList<Producto> C_productos, Statement s) {
+		Scanner sc = new Scanner (System.in);
+		
+//		Mostramos los productos
+		for (Producto p1 : C_productos) {
+			
+			p1.mostrarProducto();
+			
+		}
+		
+		System.out.println("Dime el ID del producto que quieres buscar -> ");
+		int idUsuario = sc.nextInt();
+		sc.nextLine();
+		
+		boolean encontrado = false;
+		
+		for (Producto p2 : C_productos) {
+			
+//			Buscamos por ID
+			if (idUsuario == p2.getId_producto()) {
+				encontrado = true;
+				
+				System.out.println("Que desea modificar ->");
+				System.out.println("1. Precio");
+				System.out.println("2. Stock");
+				char opc = sc.nextLine().charAt(0);
+			
+				try {
+				
+					switch(opc) {
+					case '1':
+						System.out.println("Cual es el precio nuevo: ");
+						double newPrecio = sc.nextDouble();
+
+//						Se ejecuta en el SQL
+						String comandoSQL_Precio = String.format("UPDATE productos SET precio = '%s' WHERE id_producto = '%s'", newPrecio, idUsuario);
+						s.executeUpdate(comandoSQL_Precio);
+						
+//						Se agrega en el Array
+						p2.setPrecio(newPrecio);
+						
+						System.out.println("✅ Precio actualizado correctamente");
+						
+						break;
+
+					case '2':
+						System.out.println("Cual es el stock nuevo: 1-hay / 0-no");
+						int newStock;
+						
+						do {
+							
+				            newStock = sc.nextInt();
+				            
+				            if (newStock != 0 && newStock != 1) {
+				            	
+				                System.out.println("❌ Error: Solo se permite 0 (no) o 1 (sí).");
+				                
+				            }
+				            
+				        } while (newStock != 0 && newStock != 1);
+
+//						Se ejecuta en el SQL
+						String comandoSQL_Stock = String.format("UPDATE productos SET stock = '%s' WHERE id_producto = '%s'", newStock, idUsuario);
+						s.executeUpdate(comandoSQL_Stock);
+						
+//						Se agrega en el Array
+						p2.setStock(newStock);
+						
+						System.out.println("✅ Stock actualizado correctamente");
+						break;
+						
+					default:
+						System.out.println("❌ Opción no válida");
+
+					}
+				
+				} catch (SQLException e) {
+					
+					System.out.println("❌ Error al actualizar en la base de datos");
+	                e.printStackTrace();
+					
+				}
+				
+			}
+			
+		}
+		
+		if(!encontrado) {
+	        System.out.println("❌ No existe producto con ID: " + idUsuario);
+	    }
+		
 	}
 	
 }
