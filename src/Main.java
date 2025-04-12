@@ -259,15 +259,7 @@ public class Main {
     
     public static void añadirProducto (ArrayList<Producto> C_productos, Producto pAux, Statement s) {
     	
-    	try {
-    		
-			pAux.añadirProducto(C_productos, s);
-			
-		} catch (SQLException e) {
-
-			e.printStackTrace();
-			
-		}
+    	pAux.añadirProducto(C_productos, s);
     	
     }
 	

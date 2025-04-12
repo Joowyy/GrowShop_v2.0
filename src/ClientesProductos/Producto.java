@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Producto {
 
 //	ATRIBUTOS
-	private int id;
+	private int id_producto;
 	private String nombre;
 	private double precio;
 	private int stock;
@@ -23,19 +23,19 @@ public class Producto {
 		this.precio = precio;
 		this.stock = stock;
 	}
-	public Producto(int id, String nombre, double precio, int stock) {
-		this.id = id;
+	public Producto(int id_producto, String nombre, double precio, int stock) {
+		this.id_producto = id_producto;
 		this.nombre = nombre;
 		this.precio = precio;
 		this.stock = stock;
 	}
 	
 //	GETTERS SETTERS
-	public int getId() {
-		return id;
+	public int getId_producto() {
+		return id_producto;
 	}
 	public void setId(int id) {
-		this.id = id;
+		this.id_producto = id_producto;
 	}
 	public String getNombre() {
 		return nombre;
@@ -66,12 +66,12 @@ public class Producto {
 	        ResultSet rs = s.executeQuery("SELECT * FROM productos");
 	        
 	        while (rs.next()) {
-	        	int id = rs.getInt("id_producto");
+	        	int id_producto = rs.getInt("id_producto");
 	            String nombre = rs.getString("nombre");
 	            double precio = rs.getDouble("precio");
 	            int stock = rs.getInt("stock");
 
-	            productos.add(new Producto(id, nombre, precio, stock));
+	            productos.add(new Producto(id_producto, nombre, precio, stock));
 	            
 	        }
 	        
@@ -88,7 +88,7 @@ public class Producto {
 		
 		System.out.println("\n________________________\n    --PRODUCTOS--");
 		System.out.println("------------------------");
-		System.out.println("ID -> " + id);
+		System.out.println("ID -> " + id_producto);
 		System.out.println("Nombre -> " + nombre);
 		System.out.println("Precio -> " + precio);
 		System.out.println("Stock -> " + stock);
@@ -96,41 +96,45 @@ public class Producto {
 		
 	}
 	
-	public void añadirProducto(ArrayList<Producto> C_productos, Statement s) throws SQLException {
+	public void añadirProducto(ArrayList<Producto> C_productos, Statement s) {
 		Scanner sc = new Scanner (System.in);
 		
 		System.out.println("Nombre del producto: ");
 		String nombreP = sc.nextLine();
 		System.out.println("Precio del producto: ");
 		double precioP = sc.nextDouble();
-		System.out.println("¿Habrá stock en 2d max.? 1-si / 0-no");
-		int stockP = sc.nextInt();
+		int stockP;
+        do {
+            System.out.println("¿Habrá stock en 2d max.? 1-si / 0-no");
+            stockP = sc.nextInt();
+            if (stockP != 0 && stockP != 1) {
+                System.out.println("❌ Error: Solo se permite 0 (no) o 1 (sí).");
+            }
+        } while (stockP != 0 && stockP != 1);
 		
 		String comandoSQL = String.format("INSERT INTO productos (nombre, precio, stock) VALUES ('%s', '%s', '%s')", nombreP, precioP, stockP);
 
+		System.out.println("DEBUG: " + comandoSQL); // Verificar consulta
+		
 		try {
 
 //			Se utiliza para vincular el ID del AI (AutoIncrement) de las tabla SQL.
 			// Ejecutamos la inserción especificando que queremos las claves generadas
 			s.executeUpdate(comandoSQL, Statement.RETURN_GENERATED_KEYS);
 
-			// Obtenemos el ID generado
-			ResultSet generatedKeys = s.getGeneratedKeys();
-			int idGenerado = 0;
+	        // Obtener ID generado
+	        ResultSet generatedKeys = s.getGeneratedKeys();
+	        if (generatedKeys.next()) {
+	            int idGenerado = generatedKeys.getInt(1);
+	            C_productos.add(new Producto(idGenerado, nombreP, precioP, stockP));
+	            System.out.println("✅ Producto añadido con éxito. ID: " + idGenerado);
+	        }
 
-			if (generatedKeys.next()) {
-				idGenerado = generatedKeys.getInt(1);
-			}
-			
-			C_productos.add(new Producto(nombreP, precioP, stockP));
-			System.out.println("Producto añadido con éxito.");
-			
 		} catch (SQLException e) {
 		    System.out.println("❌ Error al crear el producto.");
 		    e.printStackTrace();
 		}
 
-		
 	}
 	
 }
