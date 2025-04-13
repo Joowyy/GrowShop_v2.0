@@ -39,7 +39,7 @@ public class Main {
                 break;
             
             case '3':
-                //procesarVenta();
+                procesarVenta(C_productos, C_clientes, s);
                 break;
             
             case '4':
@@ -93,13 +93,34 @@ public class Main {
 			
 			System.out.println("________________________\n    --PRODUCTOS--");
 			System.out.println("------------------------");
-			System.out.println("ID | Nombre | Precio | Stock\n");
+			System.out.println("ID | Nombre | Precio | Cantidad | Stock\n");
 			try {
 				
 				ResultSet rs = s.executeQuery("SELECT * FROM productos");
 				while (rs.next()) {
 	
-					System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getString(4));
+					System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3) + " | " + rs.getString(4) + " | " + rs.getString(5));
+					
+				}
+				System.out.println("------------------------");
+				
+			} catch (SQLException e) {
+	
+				e.printStackTrace();
+				
+			}
+			
+		} else if (tabla.equalsIgnoreCase("compras")) {
+			
+			System.out.println("________________________\n    --COMPRAS--");
+			System.out.println("------------------------");
+			System.out.println("ID_Cliente | ID_Producto | Cantidad\n");
+			try {
+				
+				ResultSet rs = s.executeQuery("SELECT * FROM compras");
+				while (rs.next()) {
+	
+					System.out.println(rs.getString(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
 					
 				}
 				System.out.println("------------------------");
@@ -283,7 +304,7 @@ public class Main {
     	
     	for (Cliente c1 : C_clientes) {
     		
-    		c1.mostrarProducto();
+    		c1.mostrarCliente();
     		
     	}
     	
@@ -298,6 +319,89 @@ public class Main {
     public static void eliminarCliente (ArrayList<Cliente> C_clientes, Cliente cAux, Statement s) {
     	
     	cAux.eliminarCliente(C_clientes, s);
+    	
+    }
+    
+//	---- COMPRAS/VENTAS ----
+    public static void procesarVenta (ArrayList<Producto> C_productos, ArrayList<Cliente> C_clientes, Statement s) {
+    	Scanner sc = new Scanner (System.in);
+    	boolean compraHecha = false;
+    	
+//    	Muestra los productos
+    	for (Producto p1 : C_productos) {
+    		
+    		p1.mostrarProducto();
+    		
+    	}
+    	
+    	System.out.println("Dime el ID del producto que deseas comprar: ");
+    	int idComprarP = sc.nextInt();
+    	
+    	for (Producto p2 : C_productos) {
+    		
+//    		Compara los id del producto
+    		if (p2.getId_producto() == idComprarP) {
+    			
+//    			Muestra los clientes
+    			for (Cliente c1 : C_clientes) {
+    				
+    				c1.mostrarCliente();
+    				
+    			}
+    			
+    			System.out.println("Dime el ID del cliente: ");
+    			int idComprarC = sc.nextInt();
+    			
+//    			Compara el id del cliente
+    			for (Cliente c2 : C_clientes) {
+    				
+    				if (c2.getId_cliente() == idComprarC) {
+    					
+//    					Cantidad
+    					System.out.println("Cuantos " + p2.getNombre() + "s desear llevarte: ");
+    					int cantidadCompra;
+    					do {
+    						
+    						cantidadCompra = sc.nextInt();
+    						
+    					} while (cantidadCompra <= 0 || cantidadCompra > p2.getCantidad());
+    					
+    					try {
+    						
+//    						Se añade la sentencia a la tabla compras
+    						String comandoSQL = String.format("INSERT INTO compras (id_cliente, id_producto, cantidad_producto) VALUES ('%s', '%s', '%s') ON DUPLICATE KEY UPDATE cantidad_producto = cantidad_producto + '%s'", idComprarC, idComprarP, cantidadCompra, cantidadCompra);
+							s.executeUpdate(comandoSQL);
+							
+//							Modifica el atributo cantidad
+							p2.setCantidad(p2.getCantidad() - cantidadCompra);
+							
+//							Modifica el atributo en la base de datos
+							String comandoMenosCantidad = String.format("UPDATE productos SET cantidad = cantidad - '%s' WHERE id_producto = '%s'", cantidadCompra, idComprarP);
+							s.executeUpdate(comandoMenosCantidad);
+							
+							compraHecha = true;
+							System.out.println("✅ Compra realizada con éxito");
+							
+						} catch (SQLException e) {
+							
+							System.out.println("❌ Error al actualizar en la base de datos");
+							e.printStackTrace();
+							
+						}
+    					
+    				}
+    				
+    			}
+    			
+    		}
+    		
+    	}
+    	
+    	if (!compraHecha) {
+    		
+    		System.out.println("❌ Error al realizar la compra.");
+    		
+    	}
     	
     }
 	

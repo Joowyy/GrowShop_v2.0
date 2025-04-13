@@ -70,7 +70,7 @@ public class Cliente {
 	    return C_clientes;
 	}
 	
-	public void mostrarProducto() {
+	public void mostrarCliente() {
 		
 		System.out.println("\n________________________\n    --CLIENTES--");
 		System.out.println("------------------------");
@@ -143,7 +143,7 @@ public class Cliente {
 		
 		for (Cliente c1 : C_clientes) {
 			
-			c1.mostrarProducto();
+			c1.mostrarCliente();
 			
 		}
 		

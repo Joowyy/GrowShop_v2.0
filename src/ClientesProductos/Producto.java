@@ -12,21 +12,24 @@ public class Producto {
 	private int id_producto;
 	private String nombre;
 	private double precio;
+	private int cantidad;
 	private int stock;
 
 //	CONSTRUCTORES
 	public Producto() {
 		
 	}
-	public Producto(String nombre, double precio, int stock) {
+	public Producto(String nombre, double precio, int cantidad, int stock) {
 		this.nombre = nombre;
 		this.precio = precio;
+		this.cantidad = cantidad;
 		this.stock = stock;
 	}
-	public Producto(int id_producto, String nombre, double precio, int stock) {
+	public Producto(int id_producto, String nombre, double precio, int cantidad, int stock) {
 		this.id_producto = id_producto;
 		this.nombre = nombre;
 		this.precio = precio;
+		this.cantidad = cantidad;
 		this.stock = stock;
 	}
 	
@@ -49,6 +52,12 @@ public class Producto {
 	public void setPrecio(double precio) {
 		this.precio = precio;
 	}
+	public int getCantidad() {
+		return cantidad;
+	}
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
+	}
 	public int getStock() {
 		return stock;
 	}
@@ -69,9 +78,10 @@ public class Producto {
 	        	int id_producto = rs.getInt("id_producto");
 	            String nombre = rs.getString("nombre");
 	            double precio = rs.getDouble("precio");
+	            int cantidad = rs.getInt("cantidad");
 	            int stock = rs.getInt("stock");
 
-	            C_productos.add(new Producto(id_producto, nombre, precio, stock));
+	            C_productos.add(new Producto(id_producto, nombre, precio, cantidad, stock));
 	            
 	        }
 	        
@@ -91,6 +101,7 @@ public class Producto {
 		System.out.println("ID -> " + id_producto);
 		System.out.println("Nombre -> " + nombre);
 		System.out.println("Precio -> " + precio);
+		System.out.println("Cantidad -> " + cantidad);
 		System.out.println("Stock -> " + stock);
 		System.out.println("------------------------\n");
 		
@@ -103,6 +114,8 @@ public class Producto {
 		String nombreP = sc.nextLine();
 		System.out.println("Precio del producto: ");
 		double precioP = sc.nextDouble();
+		System.out.println("Cuanto stock habrá: ");
+		int cantidadP = sc.nextInt();
 		int stockP;
         
 		do {
@@ -118,7 +131,7 @@ public class Producto {
             
         } while (stockP != 0 && stockP != 1);
 		
-		String comandoSQL = String.format("INSERT INTO productos (nombre, precio, stock) VALUES ('%s', '%s', '%s')", nombreP, precioP, stockP);
+		String comandoSQL = String.format("INSERT INTO productos (nombre, precio, cantidad, stock) VALUES ('%s', '%s', '%s', '%s')", nombreP, precioP, cantidadP, stockP);
 
 // 		Verificar consulta
 		System.out.println("DEBUG: " + comandoSQL);
@@ -134,7 +147,7 @@ public class Producto {
 	        if (generatedKeys.next()) {
 	        	
 	            int idGenerado = generatedKeys.getInt(1);
-	            C_productos.add(new Producto(idGenerado, nombreP, precioP, stockP));
+	            C_productos.add(new Producto(idGenerado, nombreP, precioP, cantidadP, stockP));
 	            
 	            System.out.println("✅ Producto añadido con éxito. ID: " + idGenerado);
 	            
@@ -173,7 +186,8 @@ public class Producto {
 				
 				System.out.println("Que desea modificar ->");
 				System.out.println("1. Precio");
-				System.out.println("2. Stock");
+				System.out.println("2. Cantidad");
+				System.out.println("3. Stock");
 				char opc = sc.nextLine().charAt(0);
 			
 				try {
@@ -193,8 +207,23 @@ public class Producto {
 						System.out.println("✅ Precio actualizado correctamente");
 						
 						break;
-
+						
 					case '2':
+						System.out.println("Cual es el precio nuevo: ");
+						double newCantidad = sc.nextDouble();
+
+//						Se ejecuta en el SQL
+						String comandoSQL_Cantidad = String.format("UPDATE productos SET cantidad = '%s' WHERE id_producto = '%s'", newCantidad, idUsuario);
+						s.executeUpdate(comandoSQL_Cantidad);
+						
+//						Se agrega en el Array
+						p2.setPrecio(newCantidad);
+						
+						System.out.println("✅ Cantidad actualizada correctamente");
+						
+						break;
+
+					case '3':
 						System.out.println("Cual es el stock nuevo: 1-hay / 0-no");
 						int newStock;
 						
