@@ -132,9 +132,6 @@ public class Producto {
         } while (stockP != 0 && stockP != 1);
 		
 		String comandoSQL = String.format("INSERT INTO productos (nombre, precio, cantidad, stock) VALUES ('%s', '%s', '%s', '%s')", nombreP, precioP, cantidadP, stockP);
-
-// 		Verificar consulta
-		System.out.println("DEBUG: " + comandoSQL);
 		
 		try {
 

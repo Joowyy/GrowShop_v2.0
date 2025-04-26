@@ -64,7 +64,7 @@ public class Main {
 	public static void mostrarTablas (Statement s) {
 		Scanner sc = new Scanner (System.in);
 		
-		System.out.println("¿Quieres ver la tabla productos o clientes?");
+		System.out.println("¿Quieres ver la tabla productos, clientes o compras?");
 		String tabla = sc.nextLine();
 		
 		if (tabla.equalsIgnoreCase("clientes")) {
